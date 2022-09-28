@@ -162,7 +162,7 @@ pub mod pallet {
 			// build `Claims`
 			self.claims
 				.iter()
-				.map(|(a, b, _, _)| (a.clone(), b.clone()))
+				.map(|(a, b, _, _)| (a, b))
 				.for_each(|(a, b)| {
 					Claims::<T>::insert(a, b);
 				});
