@@ -628,7 +628,7 @@ mod tests {
 		traits::{ExistenceRequirement, GenesisBuild},
 		weights::{GetDispatchInfo, Pays},
 	};
-	use pallet_balances;
+
 	use sp_runtime::{
 		testing::Header,
 		traits::{BlakeTwo256, Identity, IdentityLookup},

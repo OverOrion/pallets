@@ -636,8 +636,8 @@ fn confirm_processed_parentchain_block_works() {
 
 		assert_ok!(Teerex::confirm_processed_parentchain_block(
 			Origin::signed(signer7.clone()),
-			block_hash.clone(),
-			merkle_root.clone(),
+			block_hash,
+			merkle_root,
 		));
 
 		let expected_event =
