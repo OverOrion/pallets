@@ -101,13 +101,10 @@ fn get_existing_exchange_rate_works() {
 #[test]
 fn get_inexisting_exchange_rate_is_zero() {
 	new_test_ext().execute_with(|| {
-		assert_eq!(
-			ExchangeRates::<Test>::contains_key(
-				DOT_USD_TRADING_PAIR.to_owned(),
-				COINGECKO_SRC.to_owned()
-			),
-			false
-		);
+		assert!(!ExchangeRates::<Test>::contains_key(
+			DOT_USD_TRADING_PAIR.to_owned(),
+			COINGECKO_SRC.to_owned()
+		));
 		assert_eq!(
 			Exchange::exchange_rate(DOT_USD_TRADING_PAIR.to_owned(), COINGECKO_SRC.to_owned()),
 			U32F32::from_num(0)
