@@ -160,12 +160,9 @@ pub mod pallet {
 	impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
 		fn build(&self) {
 			// build `Claims`
-			self.claims
-				.iter()
-				.map(|(a, b, _, _)| (a, b))
-				.for_each(|(a, b)| {
-					Claims::<T>::insert(a, b);
-				});
+			self.claims.iter().map(|(a, b, _, _)| (a, b)).for_each(|(a, b)| {
+				Claims::<T>::insert(a, b);
+			});
 			// build `Total`
 			Total::<T>::put(
 				self.claims
@@ -994,7 +991,7 @@ mod tests {
 		new_test_ext().execute_with(|| {
 			assert_eq!(Balances::free_balance(42), 0);
 			let s = sig::<Test>(&dave(), &42u64.encode(), &[]);
-			let r = Claims::claim(Origin::none(), 42, s.clone());
+			let r = Claims::claim(Origin::none(), 42, s);
 			assert_noop!(r, Error::<Test>::InvalidStatement);
 		});
 	}
