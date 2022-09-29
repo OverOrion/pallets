@@ -251,8 +251,8 @@ fn update_ipfs_hash_works() {
 		assert_eq!(Teerex::enclave_count(), 1);
 		assert_ok!(Teerex::confirm_processed_parentchain_block(
 			Origin::signed(signer.clone()),
-			block_hash.clone(),
-			merkle_root.clone(),
+			block_hash,
+			merkle_root,
 		));
 
 		let expected_event =
@@ -314,16 +314,16 @@ fn unshield_is_only_executed_once_for_the_same_call_hash() {
 			AccountKeyring::Alice.to_account_id(),
 			50,
 			bonding_account.clone(),
-			call_hash.clone()
+			call_hash
 		)
 		.is_ok());
 
 		assert!(Teerex::unshield_funds(
-			Origin::signed(signer.clone()),
+			Origin::signed(signer),
 			AccountKeyring::Alice.to_account_id(),
 			50,
-			bonding_account.clone(),
-			call_hash.clone()
+			bonding_account,
+			call_hash
 		)
 		.is_ok());
 
@@ -535,7 +535,7 @@ fn verify_unshield_funds_works() {
 			AccountKeyring::Alice.to_account_id(),
 			50,
 			bonding_account.clone(),
-			call_hash.clone()
+			call_hash
 		)
 		.is_ok());
 		assert_eq!(Balances::free_balance(bonding_account), 50);
@@ -560,8 +560,8 @@ fn unshield_funds_from_not_registered_enclave_errs() {
 				Origin::signed(signer4.clone()),
 				AccountKeyring::Alice.to_account_id(),
 				51,
-				signer4.clone(),
-				call_hash.clone()
+				signer4,
+				call_hash
 			),
 			Error::<Test>::EnclaveIsNotRegistered
 		);
@@ -608,7 +608,7 @@ fn unshield_funds_from_enclave_neq_bonding_account_errs() {
 				AccountKeyring::Alice.to_account_id(),
 				50,
 				not_bonding_account.clone(),
-				call_hash.clone()
+				call_hash
 			),
 			Error::<Test>::WrongMrenclaveForBondingAccount
 		);

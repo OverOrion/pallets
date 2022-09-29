@@ -176,17 +176,16 @@ pub mod pallet {
 			// build `Signing`
 			self.claims
 				.iter()
-				.filter_map(|(a, _, _, s)| Some((a.clone(), s.clone()?)))
+				.filter_map(|(a, _, _, s)| Some((*a, (*s)?)))
 				.for_each(|(a, s)| {
 					Signing::<T>::insert(a, s);
 				});
 			// build `Preclaims`
-			self.claims
-				.iter()
-				.filter_map(|(a, _, i, _)| Some((i.clone()?, a.clone())))
-				.for_each(|(i, a)| {
+			self.claims.iter().filter_map(|(a, _, i, _)| Some((i.clone()?, *a))).for_each(
+				|(i, a)| {
 					Preclaims::<T>::insert(i, a);
-				});
+				},
+			);
 		}
 	}
 
@@ -1099,7 +1098,7 @@ mod tests {
 			assert_ok!(Claims::claim_attest(
 				Origin::none(),
 				69,
-				signature.clone(),
+				signature,
 				StatementKind::Regular.to_text().to_vec()
 			));
 			assert_eq!(Balances::free_balance(&69), 200);
