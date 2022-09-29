@@ -87,7 +87,7 @@ fn list_enclaves_works() {
 		assert_eq!(Teerex::enclave_count(), 1);
 		let enclaves = list_enclaves();
 		assert_eq!(enclaves[0].1.pubkey, signer);
-		assert!(enclaves.contains(&(1, e_1.clone())));
+		assert!(enclaves.contains(&(1, e_1)));
 	})
 }
 
@@ -127,7 +127,7 @@ fn remove_middle_enclave_works() {
 		};
 
 		assert_ok!(Teerex::register_enclave(
-			Origin::signed(signer5.clone()),
+			Origin::signed(signer5),
 			TEST5_CERT.to_vec(),
 			URL.to_vec(),
 		));
@@ -147,22 +147,22 @@ fn remove_middle_enclave_works() {
 
 		// add enclave 3
 		assert_ok!(Teerex::register_enclave(
-			Origin::signed(signer7.clone()),
+			Origin::signed(signer7),
 			TEST7_CERT.to_vec(),
 			URL.to_vec(),
 		));
 		assert_eq!(Teerex::enclave_count(), 3);
 		let enclaves = list_enclaves();
 		assert!(enclaves.contains(&(1, e_1.clone())));
-		assert!(enclaves.contains(&(2, e_2.clone())));
+		assert!(enclaves.contains(&(2, e_2)));
 		assert!(enclaves.contains(&(3, e_3.clone())));
 
 		// remove enclave 2
 		assert_ok!(Teerex::unregister_enclave(Origin::signed(signer6)));
 		assert_eq!(Teerex::enclave_count(), 2);
 		let enclaves = list_enclaves();
-		assert!(enclaves.contains(&(1, e_1.clone())));
-		assert!(enclaves.contains(&(2, e_3.clone())));
+		assert!(enclaves.contains(&(1, e_1)));
+		assert!(enclaves.contains(&(2, e_3)));
 	})
 }
 
@@ -383,8 +383,8 @@ fn timestamp_callback_works() {
 		assert_eq!(Teerex::enclave_count(), 2);
 		//2 and 3 are still there. 3 and 1 were swapped -> 3 and 2
 		let enclaves = list_enclaves();
-		assert!(enclaves.contains(&(1, e_3.clone())));
-		assert!(enclaves.contains(&(2, e_2.clone())));
+		assert!(enclaves.contains(&(1, e_3)));
+		assert!(enclaves.contains(&(2, e_2)));
 
 		run_to_block(3);
 		//enclave 6 and 7 still registered: not long enough silent
@@ -421,13 +421,13 @@ fn debug_mode_enclave_attest_works_when_sgx_debug_mode_is_allowed() {
 
 		//Register an enclave compiled in debug mode
 		assert_ok!(Teerex::register_enclave(
-			Origin::signed(signer4.clone()),
+			Origin::signed(signer4),
 			TEST4_CERT.to_vec(),
 			URL.to_vec(),
 		));
 		assert_eq!(Teerex::enclave_count(), 1);
 		let enclaves = list_enclaves();
-		assert!(enclaves.contains(&(1, e_0.clone())));
+		assert!(enclaves.contains(&(1, e_0)));
 	})
 }
 
@@ -447,13 +447,13 @@ fn production_mode_enclave_attest_works_when_sgx_debug_mode_is_allowed() {
 
 			//Register an enclave compiled in production mode
 			assert_ok!(Teerex::register_enclave(
-				Origin::signed(signer8.clone()),
+				Origin::signed(signer8),
 				TEST8_CERT.to_vec(),
 				URL.to_vec(),
 			));
 			assert_eq!(Teerex::enclave_count(), 1);
 			let enclaves = list_enclaves();
-			assert!(enclaves.contains(&(1, e_0.clone())));
+			assert!(enclaves.contains(&(1, e_0)));
 		})
 	})
 }
@@ -465,11 +465,7 @@ fn debug_mode_enclave_attest_fails_when_sgx_debug_mode_not_allowed() {
 		let signer4 = get_signer(TEST4_SIGNER_PUB);
 		//Try to register an enclave compiled in debug mode
 		assert_err!(
-			Teerex::register_enclave(
-				Origin::signed(signer4.clone()),
-				TEST4_CERT.to_vec(),
-				URL.to_vec(),
-			),
+			Teerex::register_enclave(Origin::signed(signer4), TEST4_CERT.to_vec(), URL.to_vec(),),
 			Error::<Test>::SgxModeNotAllowed
 		);
 		assert_eq!(Teerex::enclave_count(), 0);
@@ -490,13 +486,13 @@ fn production_mode_enclave_attest_works_when_sgx_debug_mode_not_allowed() {
 
 		//Register an enclave compiled in production mode
 		assert_ok!(Teerex::register_enclave(
-			Origin::signed(signer8.clone()),
+			Origin::signed(signer8),
 			TEST8_CERT.to_vec(),
 			URL.to_vec(),
 		));
 		assert_eq!(Teerex::enclave_count(), 1);
 		let enclaves = list_enclaves();
-		assert!(enclaves.contains(&(1, e_0.clone())));
+		assert!(enclaves.contains(&(1, e_0)));
 	})
 }
 
@@ -531,7 +527,7 @@ fn verify_unshield_funds_works() {
 		assert!(System::events().iter().any(|a| a.event == expected_event));
 
 		assert!(Teerex::unshield_funds(
-			Origin::signed(signer4.clone()),
+			Origin::signed(signer4),
 			AccountKeyring::Alice.to_account_id(),
 			50,
 			bonding_account.clone(),
@@ -604,7 +600,7 @@ fn unshield_funds_from_enclave_neq_bonding_account_errs() {
 
 		assert_err!(
 			Teerex::unshield_funds(
-				Origin::signed(signer4.clone()),
+				Origin::signed(signer4),
 				AccountKeyring::Alice.to_account_id(),
 				50,
 				not_bonding_account.clone(),
@@ -613,8 +609,8 @@ fn unshield_funds_from_enclave_neq_bonding_account_errs() {
 			Error::<Test>::WrongMrenclaveForBondingAccount
 		);
 
-		assert_eq!(Balances::free_balance(bonding_account.clone()), 100);
-		assert_eq!(Balances::free_balance(not_bonding_account.clone()), 50);
+		assert_eq!(Balances::free_balance(bonding_account), 100);
+		assert_eq!(Balances::free_balance(not_bonding_account), 50);
 	})
 }
 
